@@ -1,0 +1,43 @@
+name: Публикация дашборда
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**', '.github/workflows/pages.yml']
+permissions:
+  contents: read
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Проверить комплект и дату
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          const s=JSON.parse(fs.readFileSync('site/status.json','utf8'));
+          const html=fs.readFileSync('site/index.html');
+          if(crypto.createHash('sha256').update(html).digest('hex')!==s.sha256) throw Error('HTML не соответствует проверенному комплекту');
+          const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Omsk',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+          const yesterday=new Date(Date.UTC(+p.year,+p.month-1,+p.day)-86400000).toISOString().slice(0,10);
+          if(s.dataDate!==yesterday) throw Error('Нет данных за вчера; прежняя публикация сохранена');
+          if(!Number.isFinite(s.total)||s.total<0) throw Error('Некорректный итог');
+          JS
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - name: Опубликовать
+        id: deployment
+        uses: actions/deploy-pages@v4
