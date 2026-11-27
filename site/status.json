@@ -1,9 +1,9 @@
 {
-    "dataDate":  "2026-11-25",
-    "sourceUpdated":  "26.11.2026 в 09:13",
-    "preparedAt":  "2026-11-26T09:15:14+06:00",
-    "total":  629026,
-    "sha256":  "8483aa416d245ad0c2f25483cba0751e3e4fbf6c63b038170249335265015c2c",
+    "dataDate":  "2026-11-26",
+    "sourceUpdated":  "27.11.2026 в 09:21",
+    "preparedAt":  "2026-11-27T09:22:31+06:00",
+    "total":  657776,
+    "sha256":  "fce96849ddf978ad94e8ab67ccb9cad35bbd4c344eff2977bc17a0cdadb0b06d",
     "automationEnabled":  false,
     "timezone":  "Asia/Omsk"
 }
